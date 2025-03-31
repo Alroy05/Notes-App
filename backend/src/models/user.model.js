@@ -6,20 +6,34 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     fullName: {
       type: String,
       required: true,
+      trim: true,
     },
     password: {
       type: String,
-      requiredL: true,
+      required: true,
       minLength: 6
     },
     profilePic: {
       type: String,
       default: ""
     },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: String,
+    verificationTokenExpires: Date,
+    activeSessions: [{
+      deviceInfo: String,
+      ipAddress: String,
+      lastActive: Date
+    }]
   },
   { timestamps: true }
 );
