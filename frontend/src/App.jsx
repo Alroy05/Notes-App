@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
-import Dashboard from './pages/Dashboard/Dashboard';
+import DashboardLayout from './components/dashboard/DashboardLayout';
+import NotesList from './pages/Dashboard/NotesList';
+import NoteForm from './components/notes/NoteForm';
+import NoteDetail from './pages/Dashboard/NoteDetail';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import VerifyEmail from './pages/Auth/VerifyEmail';
@@ -24,14 +27,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <NotFound />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />} />
         <Route 
           path="/login" 
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} 
+          element={isAuthenticated ? <Navigate to="/" /> : <Login />} 
         />
         <Route 
           path="/signup" 
-          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Signup />} 
+          element={isAuthenticated ? <Navigate to="/" /> : <Signup />} 
         />
         <Route 
           path="/verify-email" 
@@ -39,13 +42,18 @@ function App() {
         />
 
         {/* Protected routes */}
+        <Route path="/" element={<DashboardLayout />}>
+          <Route index element={<NotesList />} />
+          <Route path="notes">
+            <Route path="new" element={<NoteForm />} />
+            <Route path=":id" element={<NoteDetail />} />
+            <Route path=":id/edit" element={<NoteForm />} />
+          </Route>
+        </Route>
+
         <Route 
-          path="/dashboard" 
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/dashboard/*" 
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+          path="/*" 
+          element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />} 
         />
 
         {/* Catch-all route */}
