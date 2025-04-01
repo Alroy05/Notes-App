@@ -38,6 +38,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.pre('deleteOne', { document: true }, async function(next) {
+  await mongoose.model('Note').deleteMany({ createdBy: this._id });
+  await mongoose.model('RefreshToken').deleteMany({ userId: this._id });
+  next();
+});
+
 const User = mongoose.model("User", userSchema);
 
 export default User;
