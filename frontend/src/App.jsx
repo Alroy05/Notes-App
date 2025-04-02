@@ -9,6 +9,7 @@ import Signup from './pages/Auth/Signup';
 import VerifyEmail from './pages/Auth/VerifyEmail';
 import NotFound from './pages/Error/NotFound';
 import Loader from './components/common/Loader';
+import Settings from './pages/Dashboard/Settings';
 import { useEffect } from 'react';
 
 function App() {
@@ -50,6 +51,8 @@ function App() {
             <Route path=":id/edit" element={<NoteForm />} />
           </Route>
         </Route>
+
+        <Route path="/settings" element={<Settings />} />
 
         <Route 
           path="/*" 

@@ -9,6 +9,7 @@ export const useAuthStore = create(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      activeSessions: [],
       
       login: async (email, password) => {
         set({ isLoading: true, error: null });
@@ -62,6 +63,62 @@ export const useAuthStore = create(
           set({ user: data, isAuthenticated: true });
         } catch (error) {
           set({ user: null, isAuthenticated: false });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      fetchUser: async () => {
+        set({ isLoading: true });
+        try {
+          const { data } = await axios.get('/api/users/me');
+          set({ user: data });
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      updateProfile: async (profileData) => {
+        set({ isLoading: true, error: null });
+        try {
+          const { data } = await axios.put('/api/users/me', profileData);
+          set({ user: data });
+          return data;
+        } catch (error) {
+          const message = error.response?.data?.message || 'Failed to update profile';
+          set({ error: message });
+          throw new Error(message);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      getActiveSessions: async () => {
+        set({ isLoading: true });
+        try {
+          const { data } = await axios.get('/api/users/me/sessions');
+          set({ activeSessions: data });
+        } catch (error) {
+          console.error('Failed to get sessions:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      revokeSession: async (sessionId) => {
+        set({ isLoading: true });
+        try {
+          await axios.delete(`/api/users/me/sessions/${sessionId}`);
+          set((state) => ({
+            activeSessions: state.activeSessions.filter(
+              (session) => session._id !== sessionId
+            )
+          }));
+        } catch (error) {
+          const message = error.response?.data?.message || 'Failed to revoke session';
+          throw new Error(message);
         } finally {
           set({ isLoading: false });
         }

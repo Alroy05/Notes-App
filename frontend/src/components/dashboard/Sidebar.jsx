@@ -16,8 +16,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const navItems = [
-    { to: '/dashboard', icon: Home, label: 'Dashboard' },
-    { to: '/dashboard/settings', icon: Settings, label: 'Settings' }
+    { to: '/', icon: Home, label: 'Dashboard' },
+    { to: '/settings', icon: Settings, label: 'Settings' }
   ];
 
   const handleLogout = async () => {
