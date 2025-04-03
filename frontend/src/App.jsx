@@ -13,8 +13,8 @@ import Settings from './pages/Dashboard/Settings';
 import { useEffect } from 'react';
 
 function App() {
-  const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
-
+  const { user,isAuthenticated, isLoading, checkAuth } = useAuthStore();
+  
   // Check auth status on initial load
   useEffect(() => {
     checkAuth();
@@ -27,44 +27,28 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />} />
-        <Route 
-          path="/login" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Login />} 
-        />
-        <Route 
-          path="/signup" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Signup />} 
-        />
-        <Route 
-          path="/verify-email" 
-          element={<VerifyEmail />} 
-        />
+      {/* Public routes */}
+      <Route path="/" element={isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" />}>
+        {isAuthenticated && (
+          <>
+            <Route index element={<NotesList />} />
+            <Route path="notes">
+              <Route path="new" element={<NoteForm />} />
+              <Route path=":id" element={<NoteDetail />} />
+              <Route path=":id/edit" element={<NoteForm />} />
+            </Route>
+            <Route path="settings" element={<Settings />} />
+          </>
+        )}
+      </Route>
+      
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
+      <Route path="/signup" element={isAuthenticated ? <Navigate to="/" /> : <Signup />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
 
-        {/* Protected routes */}
-        <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<NotesList />} />
-          <Route path="notes">
-            <Route path="new" element={<NoteForm />} />
-            <Route path=":id" element={<NoteDetail />} />
-            <Route path=":id/edit" element={<NoteForm />} />
-          </Route>
-        </Route>
-
-        <Route path="/settings" element={<Settings />} />
-
-        <Route 
-          path="/*" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Navigate to="/login" />} 
-        />
-
-        {/* Catch-all route */}
-        <Route 
-          path="*" 
-          element={isAuthenticated ? <NotFound /> : <Navigate to="/login" />} 
-        />
-      </Routes>
+      {/* Catch-all route */}
+      <Route path="*" element={isAuthenticated ? <NotFound /> : <Navigate to="/login" />} />
+    </Routes>
     </BrowserRouter>
   );
 }

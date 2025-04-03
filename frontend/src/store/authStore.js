@@ -1,9 +1,7 @@
 import { create } from 'zustand';
-import axios from 'axios';
-import { persist } from 'zustand/middleware';
+import { axiosInstance } from '../lib/axios.js';
 
 export const useAuthStore = create(
-  persist(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
@@ -14,9 +12,7 @@ export const useAuthStore = create(
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const { data } = await axios.post('http://localhost:5001/api/auth/login', { email, password }, { 
-            withCredentials: true 
-          });
+          const { data } = await axiosInstance.post('/auth/login', { email, password });
           set({ user: data, isAuthenticated: true });
           return data;
         } catch (error) {
@@ -30,12 +26,10 @@ export const useAuthStore = create(
       signup: async ({ fullName, email, password }) => {
         set({ isLoading: true, error: null });
         try {
-          const { data } = await axios.post('http://localhost:5001/api/auth/signup', { 
+          const { data } = await axiosInstance.post('/api/auth/signup', { 
             fullName, 
             email, 
             password 
-          }, { 
-            withCredentials: true 
           });
           return data;
         } catch (error) {
@@ -48,7 +42,12 @@ export const useAuthStore = create(
       
       logout: async () => {
         try {
-          await axios.post('http://localhost:5001/api/auth/logout', {}, { withCredentials: true });
+          await axiosInstance.post('/auth/logout');
+          set({ user: null, isAuthenticated: false });
+        } catch (error) {
+          console.error('Logout failed:', error);
+          set({ error: error.response?.data?.message || 'Logout failed' });
+          throw error;
         } finally {
           set({ user: null, isAuthenticated: false });
         }
@@ -57,9 +56,7 @@ export const useAuthStore = create(
       checkAuth: async () => {
         set({ isLoading: true });
         try {
-          const { data } = await axios.get('http://localhost:5001/api/auth/check', { 
-            withCredentials: true 
-          });
+          const { data } = await axiosInstance.get('/auth/check');
           set({ user: data, isAuthenticated: true });
         } catch (error) {
           set({ user: null, isAuthenticated: false });
@@ -71,7 +68,7 @@ export const useAuthStore = create(
       fetchUser: async () => {
         set({ isLoading: true });
         try {
-          const { data } = await axios.get('/api/users/me');
+          const { data } = await axiosInstance.get('/users/me');
           set({ user: data });
         } catch (error) {
           console.error('Failed to fetch user:', error);
@@ -83,7 +80,22 @@ export const useAuthStore = create(
       updateProfile: async (profileData) => {
         set({ isLoading: true, error: null });
         try {
-          const { data } = await axios.put('/api/users/me', profileData);
+          const { data } = await axiosInstance.put('/users/me', profileData);
+          set({ user: data });
+          return data;
+        } catch (error) {
+          const message = error.response?.data?.message || 'Failed to update profile';
+          set({ error: message });
+          throw new Error(message);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      changePassword: async ({ currentPassword,newPassword }) => {
+        set({ isLoading: true, error: null });
+        try {
+          const { data } = await axiosInstance.put('/users/me/password', { currentPassword, newPassword });
           set({ user: data });
           return data;
         } catch (error) {
@@ -98,7 +110,7 @@ export const useAuthStore = create(
       getActiveSessions: async () => {
         set({ isLoading: true });
         try {
-          const { data } = await axios.get('/api/users/me/sessions');
+          const { data } = await axiosInstance.get('/users/me/sessions');
           set({ activeSessions: data });
         } catch (error) {
           console.error('Failed to get sessions:', error);
@@ -110,7 +122,7 @@ export const useAuthStore = create(
       revokeSession: async (sessionId) => {
         set({ isLoading: true });
         try {
-          await axios.delete(`/api/users/me/sessions/${sessionId}`);
+          await axiosInstance.delete(`/users/me/sessions/${sessionId}`);
           set((state) => ({
             activeSessions: state.activeSessions.filter(
               (session) => session._id !== sessionId
@@ -123,10 +135,10 @@ export const useAuthStore = create(
           set({ isLoading: false });
         }
       }
-    }),
+    })
+    ,
     {
       name: 'auth-storage',
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated })
     }
-  )
 );
