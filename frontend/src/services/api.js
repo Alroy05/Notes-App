@@ -16,7 +16,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       
       try {
-        const { data } = await axios.post('/api/auth/refresh-token', {}, { 
+        const { data } = await axios.post('/auth/refresh-token', {}, { 
           withCredentials: true 
         });
         useAuthStore.getState().setAuth(data);
