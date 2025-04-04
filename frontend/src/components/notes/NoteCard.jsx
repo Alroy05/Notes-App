@@ -42,13 +42,13 @@ export default function NoteCard({ note }) {
       transition={{ duration: 0.3 }}
       whileHover={{ y: -5 }}
       className={`
-        rounded-xl overflow-hidden border backdrop-filter backdrop-blur-md shadow-md
+        rounded-xl overflow-hidden backdrop-filter backdrop-blur-md shadow-md
         transition-all duration-300 h-full
         ${note.color === '#ffffff' 
           ? theme === 'dark' 
-            ? 'bg-gray-800/70 border-gray-700/50 text-white' 
-            : 'bg-white/70 border-gray-200/50 text-gray-800'
-          : `border-${note.color.substring(1)}-200/50`
+            ? 'bg-gray-800 text-white' 
+            : 'bg-white/70 text-gray-800'
+          : ``
         }
       `}
       style={{ 
