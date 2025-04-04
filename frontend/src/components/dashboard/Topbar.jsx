@@ -1,17 +1,30 @@
 import { Menu, Search, Bell, User } from 'lucide-react';
 import { useSidebar } from '../../hooks/useSidebar';
 import { useAuthStore } from '../../store/authStore';
+import { useThemeStore } from '../../store/themeStore';
 
 export default function Topbar() {
   const { toggleSidebar } = useSidebar();
   const { user } = useAuthStore();
+  const { theme } = useThemeStore();
 
   return (
-    <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow dark:bg-gray-800 dark:border-b dark:border-gray-700">
+    <div className={`
+      relative z-10 flex-shrink-0 flex h-16
+      ${theme === 'dark'
+        ? 'bg-gray-900/60 border-b border-gray-700/50'
+        : 'bg-white/60 border-b border-gray-200/50'}
+      backdrop-filter backdrop-blur-lg
+    `}>
       {/* Mobile sidebar toggle */}
       <button
         type="button"
-        className="px-4 border-r border-gray-200 dark:border-gray-700 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden"
+        className={`
+          px-4 border-r focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden
+          ${theme === 'dark'
+            ? 'border-gray-700/50 text-gray-300 hover:text-white'
+            : 'border-gray-200/50 text-gray-500 hover:text-gray-900'}
+        `}
         onClick={toggleSidebar}
       >
         <span className="sr-only">Open sidebar</span>
@@ -27,13 +40,21 @@ export default function Topbar() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
+                <Search className={`h-5 w-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} />
               </div>
               <input
                 id="search"
                 name="search"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                placeholder="Search"
+                className={`
+                  block w-full pl-10 pr-3 py-2 rounded-lg leading-5 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  ${theme === 'dark'
+                    ? 'bg-gray-800/70 placeholder-gray-400 text-white border-gray-600'
+                    : 'bg-gray-100/70 border-gray-200 placeholder-gray-500 text-gray-900'}
+                  backdrop-filter backdrop-blur-sm
+                  transition-all duration-200
+                `}
+                placeholder="Search..."
                 type="search"
               />
             </div>
@@ -44,19 +65,32 @@ export default function Topbar() {
         <div className="ml-4 flex items-center md:ml-6">
           <button
             type="button"
-            className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:hover:text-gray-300"
+            className={`
+              p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
+              ${theme === 'dark'
+                ? 'text-gray-400 hover:text-gray-200 bg-gray-800/50'
+                : 'text-gray-500 hover:text-gray-700 bg-gray-100/50'}
+              transition-all duration-200
+            `}
           >
             <span className="sr-only">View notifications</span>
-            <Bell className="h-6 w-6" />
+            <Bell className="h-5 w-5" />
           </button>
           
           {/* Profile dropdown */}
           <div className="ml-3 relative">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+            <div className={`
+              flex items-center p-1 rounded-lg
+              ${theme === 'dark' ? 'bg-gray-800/70' : 'bg-gray-100/70'}
+              backdrop-filter backdrop-blur-sm
+            `}>
+              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium shadow-md">
                 {user?.fullName?.charAt(0) || <User size={16} />}
               </div>
-              <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:block">
+              <span className={`
+                ml-2 mr-2 text-sm font-medium hidden md:block
+                ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}
+              `}>
                 {user?.fullName || 'User'}
               </span>
             </div>

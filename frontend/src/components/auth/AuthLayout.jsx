@@ -1,37 +1,80 @@
-import { Link } from 'react-router-dom';
+import { useThemeStore } from '../../store/themeStore';
 import { NotebookText } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function AuthLayout({ children, title, subtitle }) {
+  const { theme } = useThemeStore();
+  
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className={`
+      min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8
+      ${theme === 'dark' 
+        ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
+        : 'bg-gradient-to-br from-blue-50 to-indigo-50'}
+    `}>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="sm:mx-auto sm:w-full sm:max-w-md"
+      >
         <div className="flex justify-center">
-          <NotebookText className="h-12 w-12 text-blue-600 dark:text-blue-400" />
+          <motion.div
+            whileHover={{ rotate: 5, scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className={`
+              p-3 rounded-full
+              ${theme === 'dark' 
+                ? 'bg-blue-600/20 backdrop-filter backdrop-blur-sm' 
+                : 'bg-blue-500/10 backdrop-filter backdrop-blur-sm'}
+            `}
+          >
+            <NotebookText className={`
+              h-12 w-12
+              ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} 
+            />
+          </motion.div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+        
+        <motion.h2 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className={`
+            mt-6 text-center text-3xl font-extrabold
+            ${theme === 'dark' ? 'text-white' : 'text-gray-800'}
+          `}
+        >
           {title}
-        </h2>
+        </motion.h2>
+        
         {subtitle && (
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className={`
+              mt-2 text-center text-sm
+              ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+            `}
+          >
             {subtitle}
-          </p>
+          </motion.p>
         )}
-      </div>
+      </motion.div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+        className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
+      >
+        <div className={`
+          transition-all duration-300
+        `}>
           {children}
         </div>
-      </div>
-
-      <div className="mt-8 text-center text-sm text-gray-600 dark:text-gray-300">
-        <Link 
-          to="/" 
-          className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-        >
-          ← Back to home
-        </Link>
-      </div>
+      </motion.div>
     </div>
   );
 }
