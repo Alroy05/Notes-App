@@ -2,6 +2,21 @@
 
 A full-featured note-taking application with user authentication, real-time CRUD operations, and a responsive design. This project combines a Node.js/Express.js backend with a React.js frontend to create a seamless note management experience.
 
+## 1. Login Page
+![Login](./assets/ss1.png)
+
+## 2. Dashboard
+![Dashboard](./assets/ss2.png)
+
+## 3. Create/Update Note
+![Create Note](./assets/ss3.png)
+
+## 4. Profile Settings
+![Settings](./assets/ss4.png)
+
+## 5. Dark Mode
+![Dark Mode](./assets/ss5.png)
+
 ## Features
 
 ### Core Functionality
