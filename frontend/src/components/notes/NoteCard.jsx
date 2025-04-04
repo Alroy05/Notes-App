@@ -42,7 +42,7 @@ export default function NoteCard({ note }) {
       transition={{ duration: 0.3 }}
       whileHover={{ y: -5 }}
       className={`
-        rounded-xl overflow-hidden backdrop-filter backdrop-blur-md shadow-md
+        rounded-xl font-Monserret overflow-hidden backdrop-filter backdrop-blur-md shadow-md
         transition-all duration-300 h-full
         ${note.color === '#ffffff' 
           ? theme === 'dark' 
