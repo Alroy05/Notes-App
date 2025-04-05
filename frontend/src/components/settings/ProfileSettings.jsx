@@ -132,7 +132,7 @@ export default function ProfileSettings() {
         </div>
       </div>
 
-      <div className="flex justify-between pt-2">
+      <div className="flex flex-wrap justify-between pt-2">
         <button
           type="button"
           onClick={() => setShowDeleteModal(true)}

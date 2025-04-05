@@ -2,11 +2,13 @@ import { Menu, Search, Bell, User } from 'lucide-react';
 import { useSidebar } from '../../hooks/useSidebar';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
+import { useNavigate } from "react-router-dom";
 
 export default function Topbar() {
   const { toggleSidebar } = useSidebar();
   const { user } = useAuthStore();
   const { theme } = useThemeStore();
+  const navigate = useNavigate();
 
   return (
     <div className={`
@@ -79,13 +81,30 @@ export default function Topbar() {
           
           {/* Profile dropdown */}
           <div className="ml-3 relative">
-            <div className={`
-              flex items-center p-1 rounded-lg
+            <button 
+            onClick={() => {navigate('/settings')}}
+            type="button"
+            className={`
+              flex items-center p-1 rounded-full cursor-pointer
               ${theme === 'dark' ? 'bg-gray-800/70' : 'bg-gray-100/70'}
               backdrop-filter backdrop-blur-sm
             `}>
-              <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium shadow-md">
-                {user?.fullName?.charAt(0) || <User size={16} />}
+              <div className={`h-8 w-8 rounded-full ${user?.profilePic ?"bg-transparent": "bg-blue-500"} flex items-center justify-center text-white font-medium shadow-md`}>
+                {user?.profilePic ? 
+                <div>
+                  <img 
+                    src={user.profilePic} 
+                    alt={user.fullName} 
+                    className={`rounded-full object-cover border-2 shadow-md
+                      ${theme === 'dark' ? 'border-gray-700/70' : 'border-gray-200/70'}
+                    `}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/80?text=User";
+                    }}
+                  />
+              </div> 
+              :user?.fullName?.charAt(0)}
               </div>
               <span className={`
                 ml-2 mr-2 text-sm font-medium hidden md:block
@@ -93,7 +112,7 @@ export default function Topbar() {
               `}>
                 {user?.fullName || 'User'}
               </span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
