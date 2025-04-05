@@ -23,7 +23,7 @@ export default function DashboardLayout() {
           
           <main className="flex-1 overflow-y-auto p-4 md:p-6">
             <div className={`
-              h-fit rounded-xl
+              min-h-full h-fit rounded-xl
               ${theme === 'dark' 
                 ? 'bg-gray-900/30' 
                 : 'bg-white/40'}

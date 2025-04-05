@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useNotesStore } from '../../store/notesStore';
 import { Edit, ArrowLeft, Trash2 } from 'lucide-react';
+import DeleteConfirmationModal from '../../components/notes/DeleteConfirmationModal';
 
 export default function NoteDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentNote, getNote, deleteNote, isLoading, error } = useNotesStore();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -15,9 +17,12 @@ export default function NoteDetail() {
   }, [id, getNote]);
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this note?')) {
+    try {
       await deleteNote(id);
-      navigate('/dashboard');
+      toast.success('Note deleted successfully');
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to delete note');
     }
   };
 
@@ -29,7 +34,7 @@ export default function NoteDetail() {
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/')}
           className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
           <ArrowLeft className="mr-1" /> Back to notes
@@ -42,7 +47,7 @@ export default function NoteDetail() {
             <Edit size={16} className="mr-1" /> Edit
           </Link>
           <button
-            onClick={handleDelete}
+            onClick={() => setIsDeleteModalOpen(true)}
             className="flex items-center px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
           >
             <Trash2 size={16} className="mr-1" /> Delete
@@ -51,7 +56,7 @@ export default function NoteDetail() {
       </div>
 
       <div 
-        className={`p-6 rounded-lg ${currentNote.color !== '#ffffff' ? 'text-white' : 'text-gray-800 dark:text-gray-200'}`}
+        className={`p-6 rounded-lg ${currentNote.color !== '#ffffff' ? 'text-black' : 'text-gray-800 dark:text-gray-600'}`}
         style={{ backgroundColor: currentNote.color }}
       >
         <div className="flex justify-between items-start mb-4">
@@ -82,6 +87,13 @@ export default function NoteDetail() {
           ))}
         </div>
       </div>
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        itemName="note"
+      />
     </div>
   );
 }

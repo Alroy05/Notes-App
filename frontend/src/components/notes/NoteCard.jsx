@@ -16,14 +16,12 @@ export default function NoteCard({ note }) {
   };
   
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this note?')) {
       try {
         await deleteNote(note._id);
         toast.success('Note deleted successfully');
       } catch (error) {
         toast.error('Failed to delete note');
       }
-    }
   };
   
   const handleTogglePin = async () => {
