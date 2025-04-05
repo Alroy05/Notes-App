@@ -92,6 +92,22 @@ export const useAuthStore = create(
         }
       },
 
+      deleteAccount: async (password) => {
+        set({ isLoading: true, error: null });
+        try {
+          await axiosInstance.delete('/users/me', { 
+            data: { password } 
+          });
+          set({ user: null, isAuthenticated: false });
+        } catch (error) {
+          const message = error.response?.data?.message || 'Failed to delete account';
+          set({ error: message });
+          throw new Error(message);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
       changePassword: async ({ currentPassword,newPassword }) => {
         set({ isLoading: true, error: null });
         try {
