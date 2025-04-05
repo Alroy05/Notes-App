@@ -73,7 +73,7 @@ export default function NoteDetail() {
             {currentNote.tags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-black bg-opacity-20"
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white bg-opacity-20"
               >
                 {tag}
               </span>

@@ -57,7 +57,7 @@ export default function NoteCard({ note }) {
     >
       <div className="p-5 flex flex-col h-full">
         <div className="flex justify-between items-start mb-3">
-          <h3 className={`font-bold text-lg truncate ${!isLightColor(note.color) ? 'text-white' : ''}`}>
+          <h3 className={`font-bold text-lg truncate ${!isLightColor(note.color) ? 'text-gray-400' : ''}`}>
             {note.title}
           </h3>
           <button 
@@ -78,7 +78,7 @@ export default function NoteCard({ note }) {
                   ? 'text-yellow-400' 
                   : note.color === '#ffffff'
                     ? theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    : isLightColor(note.color) ? 'text-gray-500' : 'text-white/70'
+                    : isLightColor(note.color) ? 'text-gray-500' : 'text-gray-500'
                 }
               `}
               size={18} 
@@ -89,7 +89,7 @@ export default function NoteCard({ note }) {
         
         <p className={`
           text-sm mb-4 line-clamp-3 flex-grow
-          ${!isLightColor(note.color) ? 'text-white/90' : ''}
+          ${!isLightColor(note.color) ? 'text-gray-400' : ''}
         `}>
           {note.content}
         </p>
@@ -107,7 +107,7 @@ export default function NoteCard({ note }) {
                       : 'bg-gray-200/70 text-gray-700'
                     : isLightColor(note.color)
                       ? 'bg-black/10 text-gray-800'
-                      : 'bg-white/20 text-white'}
+                      : 'bg-white/40 text-gray-400'}
                 `}
               >
                 {tag}
@@ -126,7 +126,7 @@ export default function NoteCard({ note }) {
                 : 'hover:bg-black/10'}
             `}
           >
-            <Calendar size={16} className={!isLightColor(note.color) ? 'text-white/80' : ''} />
+            <Calendar size={16} className={!isLightColor(note.color) ? 'text-gray-400' : ''} />
           </Link>
           <Link 
             to={`/notes/${note._id}/edit`} 
@@ -137,7 +137,7 @@ export default function NoteCard({ note }) {
                 : 'hover:bg-black/10'}
             `}
           >
-            <Edit size={16} className={!isLightColor(note.color) ? 'text-white/80' : ''} />
+            <Edit size={16} className={!isLightColor(note.color) ? 'text-gray-400' : ''} />
           </Link>
           <button 
             onClick={handleDelete}
@@ -152,7 +152,7 @@ export default function NoteCard({ note }) {
             `}
             aria-label="Delete note"
           >
-            <Trash2 size={16} className={!isLightColor(note.color) ? 'text-white/80' : ''} />
+            <Trash2 size={16} className={!isLightColor(note.color) ? 'text-gray-400' : ''} />
           </button>
         </div>
       </div>
