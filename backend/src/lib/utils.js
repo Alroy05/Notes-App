@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 export const generateToken = (userId, res) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "59m", 
+    expiresIn: "15m", 
   });
 
   res.cookie("jwt", token, {
@@ -17,7 +17,7 @@ export const generateToken = (userId, res) => {
   return token;
 };
 
-export const generateRefreshToken = async (userId, req) => {
+export const generateRefreshToken = async (userId, req, res) => {
   // Generate a random token
   const token = crypto.randomBytes(40).toString('hex');
   const expiresAt = new Date();
@@ -30,6 +30,13 @@ export const generateRefreshToken = async (userId, req) => {
     deviceInfo: req.headers['user-agent'] || 'Unknown device',
     ipAddress: req.ip,
     expiresAt
+  });
+
+  res.cookie("refreshToken", token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV !== "development"
   });
 
   return token;

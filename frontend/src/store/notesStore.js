@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from '../services/api';
+import { axiosInstance } from '../lib/axios.js';
 
 export const useNotesStore = create((set) => ({
   notes: [],
@@ -12,7 +12,7 @@ export const useNotesStore = create((set) => ({
   fetchNotes: async () => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.get('/notes');
+      const { data } = await axiosInstance.get('/notes');
       set({ notes: data.notes });
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch notes' });
@@ -24,7 +24,7 @@ export const useNotesStore = create((set) => ({
   getNote: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.get(`/notes/${id}`);
+      const { data } = await axiosInstance.get(`/notes/${id}`);
       set({ currentNote: data });
     } catch (error) {
       set({ error: error.response?.data?.message || 'Failed to fetch note' });
@@ -36,7 +36,7 @@ export const useNotesStore = create((set) => ({
   createNote: async (noteData) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.post('/notes', noteData);
+      const { data } = await axiosInstance.post('/notes', noteData);
       set((state) => ({ notes: [data, ...state.notes] }));
       return data;
     } catch (error) {
@@ -50,7 +50,7 @@ export const useNotesStore = create((set) => ({
   updateNote: async (id, noteData) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.put(`/notes/${id}`, noteData);
+      const { data } = await axiosInstance.put(`/notes/${id}`, noteData);
       set((state) => ({
         notes: state.notes.map((note) => 
           note._id === id ? data : note
@@ -69,7 +69,7 @@ export const useNotesStore = create((set) => ({
   deleteNote: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      await axios.delete(`/notes/${id}`);
+      await axiosInstance.delete(`/notes/${id}`);
       set((state) => ({
         notes: state.notes.filter((note) => note._id !== id),
         currentNote: null
@@ -85,7 +85,7 @@ export const useNotesStore = create((set) => ({
   togglePin: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await axios.patch(`/notes/${id}/pin`);
+      const { data } = await axiosInstance.patch(`/notes/${id}/pin`);
       set((state) => ({
         notes: state.notes.map((note) => 
           note._id === id ? data : note
