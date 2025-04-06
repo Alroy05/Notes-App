@@ -65,7 +65,7 @@ export const signup = async (req, res) => {
     await sendVerificationEmail(email, verificationToken);
 
     const accessToken = generateToken(newUser._id, res);
-    const refreshToken = await generateRefreshToken(newUser._id, req, res);
+    const refreshToken = await generateRefreshToken(newUser._id, req);
 
     res.status(201).json({
       _id: newUser._id,
@@ -155,7 +155,7 @@ export const login = async (req, res) => {
     await user.save();
 
     const accessToken = generateToken(user._id, res);
-    const refreshToken = await generateRefreshToken(user._id, req, res);
+    const refreshToken = await generateRefreshToken(user._id, req);
 
     res.status(200).json({
       _id: user._id,
@@ -201,7 +201,7 @@ export const logout = async (req, res) => {
 };
 
 export const refreshAccessToken = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+  const { refreshToken } = req.body;
   
   try {
     if (!refreshToken) {
