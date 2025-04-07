@@ -2,11 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
 
 import { connectDB } from "./lib/db.js";
 import authRoutes from './routes/auth.route.js';
 import noteRoutes from './routes/notes.route.js';
 import userRoutes from "./routes/user.route.js";
+import "./lib/oauthStrategies.js"; // Ensure this file is created and contains the OAuth strategies
 
 const app = express();
 dotenv.config();
@@ -21,6 +23,7 @@ app.use(cors(
   }
 ));
 app.use(cookieParser());
+app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
 app.use("/api/notes", noteRoutes);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
@@ -15,6 +15,39 @@ export default function Login() {
   const { login, loading } = useAuthStore();
   const { theme } = useThemeStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleAuthMessage = (event) => {
+        const expectedBackendOrigin = 'http://localhost:5001';
+
+        if (event.origin !== expectedBackendOrigin) {
+            console.warn(`Login Page: Message received from unexpected origin: ${event.origin}. Expected: ${expectedBackendOrigin}. Ignoring message.`);
+            return;
+        }
+
+        if (event.data && event.data.type === 'oauth_success') {
+            console.log('Login Page: OAuth success signal received from popup.');
+            toast.success('Login successful!');
+            window.location.reload();
+        }
+         else if (event.data && event.data.type === 'oauth_error') {
+           console.error('Login Page: OAuth error signal received:', event.data.error);
+           toast.error(event.data.error || 'OAuth login failed.');
+           setErrors({ form: event.data.error || 'OAuth login failed' });
+        } else {           
+           console.log("Login Page: Received unexpected message structure:", event.data);
+        }
+    };
+
+    console.log("Login Page: Adding message listener for OAuth callbacks.");
+    window.addEventListener('message', handleAuthMessage);
+
+
+    return () => {
+        console.log("Login Page: Removing message listener.");
+        window.removeEventListener('message', handleAuthMessage);
+    };
+}, []);
 
   const validate = () => {
     const newErrors = {};
@@ -39,6 +72,29 @@ export default function Login() {
       setErrors({ form: error.message || 'Login failed' });
       toast.error('Login failed');
     }
+  };
+  
+  // Replace your handlers with these updated versions
+  const handleGoogleLogin = () => {
+    openOAuthPopup('http://localhost:5001/api/auth/google', 'google');
+  };
+  
+  const handleGitHubLogin = () => {
+    openOAuthPopup('http://localhost:5001/api/auth/github', 'github');
+  };
+
+  const openOAuthPopup = (url, provider) => {
+    // Open OAuth popup window
+    const width = 500;
+    const height = 600;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    window.open(
+      url,
+      'oauthWindow',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
   };
 
   return (
@@ -174,9 +230,9 @@ export default function Login() {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <motion.a
+              <motion.button
                 whileHover={{ y: -2 }}
-                href="#"
+                onClick={handleGoogleLogin}
                 className={`
                   w-full inline-flex justify-center py-2.5 px-4 rounded-lg
                   transition-all duration-200 shadow-sm
@@ -190,11 +246,11 @@ export default function Login() {
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
                 </svg>
-              </motion.a>
+              </motion.button>
 
-              <motion.a
+              <motion.button
                 whileHover={{ y: -2 }}
-                href="#"
+                onClick={handleGitHubLogin}
                 className={`
                   w-full inline-flex justify-center py-2.5 px-4 rounded-lg
                   transition-all duration-200 shadow-sm
@@ -212,7 +268,7 @@ export default function Login() {
                     clipRule="evenodd"
                   />
                 </svg>
-              </motion.a>
+              </motion.button>
             </div>
           </div>
 

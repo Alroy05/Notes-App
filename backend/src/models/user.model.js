@@ -2,10 +2,15 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    authProvider: {
+      type: String,
+      enum: ['local', 'google', 'github'],
+      default: 'local'
+    },
     email: {
       type: String,
-      required: true,
       unique: true,
+      required: true,
       lowercase: true,
       trim: true,
     },
@@ -16,7 +21,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
       minLength: 6
     },
     profilePic: {

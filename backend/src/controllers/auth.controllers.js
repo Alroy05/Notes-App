@@ -242,3 +242,69 @@ export const checkAuth = async (req,res) => {
     res.status(500).json({ message: "Internal Server Error"});
   }
 }
+
+export const handleOAuthCallback = (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      console.error("OAuth Callback Error: User not found in request after passport auth.");
+      throw new Error('Authentication failed, user profile not obtained.');
+    }
+
+    generateToken(req.user._id, res);
+
+    const clientUrl = 'http://localhost:5173';
+
+    res.set('Content-Type', 'text/html');
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Authentication Successful</title>
+        </head>
+        <body>
+          <p>Authentication successful. Closing window...</p>
+          <script>
+            try {
+              const targetOrigin = "${clientUrl}";
+              console.log("Popup: Attempting to post message to target origin:", targetOrigin);
+
+              if (window.opener && window.opener.postMessage) {
+                // Send a simple, non-sensitive message to the opener window
+                window.opener.postMessage(
+                  { type: 'oauth_success' }, // The message payload
+                  targetOrigin                    // Target origin for security
+                );
+                console.log("Popup: Message posted successfully to", targetOrigin);
+              } else {
+                 // This might happen if the opener window was closed or is inaccessible
+                 console.warn("Popup: window.opener or window.opener.postMessage not available.");
+                 document.body.innerHTML = "Authentication successful, but couldn't automatically signal the main window. Please close this popup manually.";
+              }
+
+              // Close the popup window itself
+              console.log("Popup: Closing window.");
+              window.close();
+
+            } catch (err) {
+              // Log any errors that occur within the popup's script execution
+              console.error("Popup: Error in script:", err);
+              // Provide fallback text in the popup if the script fails
+              document.body.innerHTML = "An error occurred during the final step of authentication. Please close this window and try again.";
+            }
+          </script>
+        </body>
+      </html>
+    `);
+
+  } catch (error) {
+    console.error("OAuth Callback Server Error:", error);
+    res.status(500).set('Content-Type', 'text/html').send(`
+        <html><body>
+          <h1>Authentication Failed</h1>
+          <p>An error occurred: ${error.message || 'Unknown error'}.</p>
+          <p>You can close this window.</p>
+        </body></html>
+    `);
+  }
+};
