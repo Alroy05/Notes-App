@@ -128,3 +128,6 @@ notes-app/
 
 ---
 This application demonstrates modern full-stack development practices with attention to security, performance, and user experience. The clean architecture allows for easy extension with additional features.
+
+---
+Made with ❤️ by Alroy
