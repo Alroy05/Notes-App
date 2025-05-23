@@ -23,7 +23,7 @@ function App() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
   
-  // Check auth status on initial load
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
